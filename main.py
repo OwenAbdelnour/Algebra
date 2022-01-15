@@ -2,82 +2,67 @@ equation = input("Equation")
 divide = 0
 
 terms = [[[]]]
-for a in range(2):
-  for b in range(divide, len(equation)):
-    if a==1:
+for x in range(2):
+  for a in range(divide, len(equation)):
+    if x==1:
       if divide==0:
         break
       elif len(terms)==1:
         terms.append([[]])
-    elif equation[b] == "=":
-      divide = b
+    elif equation[a] == "=":
+      divide = a
       break
-    if equation[b] in "+*/":
-      terms[a].append([])
-    elif equation[b]!="=":
-      terms[a][len(terms[a])-1].append(equation[b])
-  
+    if equation[a] in "+*/":
+      terms[x].append([])
+    elif equation[a]!="=":
+      terms[x][len(terms[x])-1].append(equation[a])
 
-  
-
-print(terms)
-
-"""
-def combine_coefficients(terms):
-  for a in range(len(terms)):
+for x in range(2-0**divide):
+  for a in range(len(terms[x])):
     co, num_spot, var = 0, 1, ""
-    for b in range(len(terms[a])-1,-1,-1):
-      if terms[a][b] in "123456789":
+    for b in range(len(terms[x][a])-1,-1,-1):
+      if terms[x][a][b] in "123456789":
         if num_spot==1:
-          co += int(terms[a][b])
+          co += int(terms[x][a][b])
         else:
-          co += int(terms[a][b])*num_spot
-        terms[a].remove(terms[a][b])
+          co += int(terms[x][a][b])*num_spot
+        terms[x][a].remove(terms[x][a][b])
         num_spot *= 10
-      elif terms[a][b] == "0":
-        terms[a].remove(terms[a][b])
+      elif terms[x][a][b] == "0":
+        terms[x][a].remove(terms[x][a][b])
         num_spot *= 10
-      elif terms[a][b] == "-":
-        terms[a].remove(terms[a][b])
+      elif terms[x][a][b] == "-":
+        terms[x][a].remove(terms[x][a][b])
         co *= -1
       else:
-        var += terms[a][b]
-        terms[a].remove(terms[a][b])
+        var += terms[x][a][b]
+        terms[x][a].remove(terms[x][a][b])
     if co!=0:
-      terms[a].insert(0, co)
+      terms[x][a].insert(0, co)
     if var != "":
-      terms[a].insert(1, var)
-combine_coefficients(lerms)
-if divide != -1:
-  combine_coefficients(rerms)
+      terms[x][a].insert(1, var)
 
-def like_terms():
-  def combine(terms):
+def combine():
+  for x in range(2-0**divide):
     a = 0
-    while a<len(terms):
+    while a<len(terms[x]):
       b = 0
-      while b<len(terms):
+      while b<len(terms[x]):
         if a != b:
-          if len(terms[a])==1 and len(terms[b])==1:
-            terms.append([terms[a][0]+terms[b][0]])
-            terms.pop(a)
+          if len(terms[x][a])==1 and len(terms[x][b])==1:
+            terms[x].append([terms[x][a][0]+terms[x][b][0]])
+            terms[x].pop(a)
             b -= 1
-            terms.pop(b)
-          elif len(terms[a])>1 and len(terms[b])>1 and terms[a][1]==terms[b][1]:
-            terms.append([terms[a][0]+terms[b][0], terms[a][1]])
-            terms.pop(a)
+            terms[x].pop(b)
+          elif len(terms[x][a])>1 and len(terms[x][b])>1 and terms[x][a][1]==terms[x][b][1]:
+            terms[x].append([terms[x][a][0]+terms[x][b][0], terms[x][a][1]])
+            terms[x].pop(a)
             b -= 1
-            terms.pop(b)
+            terms[x].pop(b)
         b += 1
       a += 1
-  combine(lerms)
-  if divide != -1:
-    combine(rerms)
-like_terms()
-print(lerms)
-if divide != -1:
-  print(rerms)
-
+combine()
+print(terms)
 def add_sub(term1, term2):
   pass
 
@@ -86,4 +71,3 @@ def multiply(term1, term2):
 
 def divide(term1, term2):
   pass
-"""
