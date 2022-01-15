@@ -1,6 +1,6 @@
 equation = input("Equation")
 divide = 0
-print("test")
+
 terms = [[[]]]
 for a in range(2):
   for b in range(divide, len(equation)):
