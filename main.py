@@ -13,7 +13,6 @@ for x in range(2):
   while a < len(equation):
 
     # Layering for ()
-    # Number of layers == len(terms)-2
     if len(terms)==2:
       y = x
     else:
@@ -42,7 +41,6 @@ for x in range(2):
 
     # +, -
     if equation[a] in "+-":
-      # If making new term
       if (len(terms[y][-1][0]) == 0 or terms[y][-1][-1][2] != 0) and equation[a+1] != "(":
         if equation[a+1] in "+-":
           # 2 + +3 | 2 + -3
@@ -58,7 +56,6 @@ for x in range(2):
         # New term
         print("run")
         terms[y].append([[],"",0])
-      # Modifing existing term
       # 2 * -3
       else:
         if equation[a] == "-":
@@ -83,7 +80,7 @@ for x in range(2):
         terms[x].append(terms[y][0])
       # x-(1+1)
       elif par_enter == "-":
-        terms[x].append([["*"], "", "-1", terms[y][0]])
+        terms[x].append([["*"], "", -1, terms[y][0]])
       # x*(1+1) | # x/(1+1)
       elif par_enter in "*/":
         del terms[x][-1][-1]
