@@ -1,12 +1,14 @@
 #terms[side of "="][term][modifer sign key, varible, coefficient, modifer 1, 2, 3...]
 #Each modfier is formated as a term
 
-
 equation = input("Equation")
 equal = 0
 
-terms = [[[[],"","+"]], [[[],"","+"]]]
+
+terms = [[[[],"",0]], [[[],"",0]]]
+par_key = [[], []]
 for x in range(2):
+  co = ""
   a = equal+x
   while a < len(equation):
 
@@ -23,45 +25,56 @@ for x in range(2):
     elif equation[a] == "=":
       equal = a
       break
-    
+
+    # Setting coefficient
+    if equation[a] not in "0123456789":
+      if co == "":
+        if co == "-":
+          co = "-1"
+        else:
+          co = "1"
+      if len(terms[y][-1][0])==0:
+        if (terms[y][-1][1] != "" or "1" not in co) and terms[y][-1][2] == 0:
+          terms[y][-1][2] = int(co)
+      elif (terms[y][-1][-1][1] != "" or "1" not in co) and terms[y][-1][-1][2] == 0:
+        terms[y][-1][-1][2] = int(co)
+      co = ""
+
     # +, -
     if equation[a] in "+-":
-      # Check if making new term
-      if (len(terms[y][-1][0]) == 0 or terms[y][-1][-1][1] != "+") and equation[a+1] != "(":
-        # Two signs
+      # If making new term
+      if (len(terms[y][-1][0]) == 0 or terms[y][-1][-1][2] != 0) and equation[a+1] != "(":
         if equation[a+1] in "+-":
-           # 2 + +3 | 2 + -3
+          # 2 + +3 | 2 + -3
           if equation[a] == "+":
-            terms[y].append([[],"",equation[a+1]])
+            co += equation[a+1]
           # 2 + +3 | 2 - +3
           elif equation[a+1] == "+":
-            terms[y].append([[],"",equation[a]])
-          # 2 - -3
-          else:
-            terms[y].append([[],"","+"])
+            co += equation[a]
           a += 1
-        # One sign
-        else:
-          # 2 + 3 | 2 - 3
-          terms[y].append([[],"",equation[a]])
+        # 2 - 3
+        elif equation[a]=="-":
+          co += equation[a]
+        # New term
+        print("run")
+        terms[y].append([[],"",0])
       # Modifing existing term
+      # 2 * -3
       else:
-        if terms[y][-1][-1][1]+equation[a] == "+-":
-          terms[y][-1][-1][1] = "-"
-        elif terms[y][-1][-1][1]+equation[a] == "--":
-          terms[y][-1][-1][1] = "+"
+        if equation[a] == "-":
+          co += equation[a]
 
     # *, /
     elif equation[a] in "*/":
       # Add sign to key, and term to back of existing
       terms[y][-1][0].append(equation[a])
-      terms[y][-1].append([[], "","+"])
+      terms[y][-1].append([[], "",0])
 
     # (
     elif equation[a] == "(":
-      # Save sign before "(", and go down layer
+      # Go down layer, and save sign before "("
+      terms.append([[[],"",0]])
       par_enter = equation[a-1]
-      terms.append([[[],"","+"]])
     
     # )
     elif equation[a] == ")":
@@ -82,38 +95,34 @@ for x in range(2):
       # Go up layer
       del terms[y]
 
-    # Add number or varible to term
+    # If coefficient or varible
     elif equation[a] != "=":
-      # For coefficient or varible
-      if len(terms[y][-1][0])==0:
-        # Coefficient
-        if equation[a] in "0123456789":
-          terms[y][-1][2] = terms[y][-1][2]+equation[a]
-        # Varible
-        else:
+      # If coefficient
+      if equation[a] in "0123456789":
+        co += equation[a]
+      # If varible
+      else:
+        # For term
+        if len(terms[y][-1][0])==0:
           terms[y][-1][1] = terms[y][-1][1]+equation[a]
-      # For modifer(*, /) coefficient or varible
-      else:
-        # Coefficient
-        if equation[a] in "0123456789":
-          terms[y][-1][-1][2] = terms[y][-1][-1][1]+equation[a]
-        # Varible
+        # For modifing term
         else:
-          terms[y][-1][-1][1] = terms[y][-1][-1][0]+equation[a]
+          terms[y][-1][-1][1] = terms[y][-1][-1][1]+equation[a]
     a += 1
-print(terms)
 
-for x in range(2):
-  for a in range(len(terms[x])):
-    if len(terms[x][a][0]) == 0:
-      if terms[x][a][2] == "+":
-        terms[x][a][2] = 1
-      elif terms[x][a][2] == "-":
-        terms[x][a][2] = -1
+  # Setting coefficient
+  if equation[a-1] in "0123456789":
+    if co == "":
+      if co == "-":
+        co = "-1"
       else:
-        terms[x][a][2] = float(terms[x][a][2])
-    else:
-      pass
+        co = "1"
+    if len(terms[y][-1][0])==0:
+      if (terms[y][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][2] == 0:
+        terms[y][-1][2] = int(co)
+    elif (terms[y][-1][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][-1][2] == 0:
+      terms[y][-1][-1][2] = int(co)
+print(terms)
 
 def print_eq():
   pass
