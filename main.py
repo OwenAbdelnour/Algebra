@@ -1,3 +1,7 @@
+#terms[side of "="][term][modifer sign key, varible, coefficient, modifer 1, 2, 3...]
+#Each modfier is formated as a term
+
+
 equation = input("Equation")
 equal = 0
 
@@ -7,6 +11,7 @@ for x in range(2):
   while a < len(equation):
 
     # Layering for ()
+    # Number of layers == len(terms)-2
     if len(terms)==2:
       y = x
     else:
@@ -105,6 +110,8 @@ for x in range(2):
         terms[x][a][2] = 1
       elif terms[x][a][2] == "-":
         terms[x][a][2] = -1
+      else:
+        terms[x][a][2] = float(terms[x][a][2])
     else:
       pass
 
