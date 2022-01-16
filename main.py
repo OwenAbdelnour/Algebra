@@ -57,8 +57,7 @@ for x in range(2):
         print("run")
         terms[y].append([[],"",0])
       # 2 * -3
-      else:
-        if equation[a] == "-":
+      elif equation[a] == "-":
           co += equation[a]
 
     # *, /
@@ -122,4 +121,6 @@ for x in range(2):
 print(terms)
 
 def print_eq():
-  pass
+  for x in range(2):
+    for a in range(len(terms[x])):
+      
