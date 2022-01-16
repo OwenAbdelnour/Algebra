@@ -119,8 +119,33 @@ for x in range(2):
     elif (terms[y][-1][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][-1][2] == 0:
       terms[y][-1][-1][2] = int(co)
 print(terms)
-
+example = [["*"], "", 2, [["/"], "", 9, [[[], "", 3], [[], "", 3]]]] # 2*(9/(3+3))
 def print_eq():
   for x in range(2):
     for a in range(len(terms[x])):
-      
+      term_cur = term[x][a]
+      while True:
+        if len(term_cur[0])==0:
+          pass
+        else:
+          for b in len(term_cur[0]):
+            term_cur = term[x][a][2+b]
+            
+      print("+", end="")
+
+"""
+if len(term[x][a][0])==0:
+  if term[x][a][1]!="":
+    # x
+    if term[x][a][2]==1:
+      print(term[x][a][1], end="")
+    # -x
+    elif term[x][a][2]==-1:
+      print("-"+term[x][a][1])
+    # 2x | -2x
+    else:
+      print(str(term[x][a][2])+term[x][a][1])
+  # 1 | -1
+  else:
+    print(term[x][a][2], end="")
+"""
