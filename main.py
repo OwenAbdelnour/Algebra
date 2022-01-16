@@ -5,34 +5,51 @@ terms = [[[[],"","+"]], [[[],"","+"]]]
 for x in range(2):
   a = equal+x
   while a < len(equation):
+
+    # Layering for ()
     if len(terms)==2:
       y = x
     else:
       y = -1
+
+    # Check for "="
     if x==1 and equal == 0:
         break
     elif equation[a] == "=":
       equal = a
       break
+    
+    # +, -
     if equation[a] in "+-":
+
+      # Check if making new term
       if (len(terms[y][-1][0]) == 0 or terms[y][-1][-1][1] != "+") and equation[a+1] != "(":
-        if terms[y][-1][2] == "+":
-          if equation[a] == "-":
-            terms[y][-1][2] = "-"
-        elif equation[a-1] not in "+-":
+        if equation[a+1] in "+-":
+           # 2 + +3 | 2 + -3
+          if equation[a] == "+":
+            terms[y].append([[],"",equation[a+1]])
+          # 2 + +3 | 2 - +3
+          elif equation[a+1] == "+":
+            terms[y].append([[],"",equation[a]])
+          # 2 - -3
+          else:
+            terms[y].append([[],"","+"])
+          a += 1
+        else:
+          # 2 + 3 | 2 - 3
           terms[y].append([[],"",equation[a]])
-        elif equation[a-1]+equation[a] == "+-":
-          terms[y][-1] = [],"","-"
-        elif equation[a-1]+equation[a] == "--":
-          terms[y][-1] = [],"","+"
+
+      # Modifing existing term
       else:
         if terms[y][-1][-1][1]+equation[a] == "+-":
           terms[y][-1][-1][1] = "-"
         elif terms[y][-1][-1][1]+equation[a] == "--":
           terms[y][-1][-1][1] = "+"
+
     elif equation[a] in "*/":
       terms[y][-1][0].append(equation[a])
-      terms[y][-1].append(["","+"])
+      terms[y][-1].append([[], "","+"])
+
     elif equation[a] == "(":
       par_enter = equation[a-1]
       terms.append([[[],"","+"]])
@@ -48,6 +65,7 @@ for x in range(2):
         terms[x][-1][0].append("*")
         terms[x][-1].append(terms[y][0])
       del terms[y]
+
     elif equation[a] != "=":
       if len(terms[y][-1][0])==0:
         if equation[a] in "0123456789":
@@ -56,8 +74,21 @@ for x in range(2):
           terms[y][-1][1] = terms[y][-1][1]+equation[a]
       else:
         if equation[a] in "0123456789":
-          terms[y][-1][-1][1] = terms[y][-1][-1][1]+equation[a]
+          terms[y][-1][-1][2] = terms[y][-1][-1][1]+equation[a]
         else:
-          terms[y][-1][-1][0] = terms[y][-1][-1][0]+equation[a]
+          terms[y][-1][-1][1] = terms[y][-1][-1][0]+equation[a]
     a += 1
 print(terms)
+
+for x in range(2):
+  for a in range(len(terms[x])):
+    if len(terms[x][a][0]) == 0:
+      if terms[x][a][2] == "+":
+        terms[x][a][2] = 1
+      elif terms[x][a][2] == "-":
+        terms[x][a][2] = -1
+    else:
+      pass
+
+def print_eq():
+  pass
