@@ -144,42 +144,46 @@ print(terms)
 
 
 def print_eq():
+  eq = []
   # Number Check: See if number can be int
   def numc(num):
     if num%1==0:
       return str(int(num))
-    return str(num)
+
   # Prints modifing terms
   def nest(term):
     # If term is single term
     if isinstance(term[1], str):
       # If no modifers
       if term[0]==[]:
-        print(numc(term[2])+term[1]+"+", end="")
-      # If modifers -> check modifing terms
+        if len(eq)!=0 and eq[-1] not in "+-*/(":
+          eq.append("+")
+        eq.append(numc(term[2])+term[1])
+      # If modifers -> check modifing terms; par control
       else:
-        print(numc(term[2]), end="")
+        eq.append(numc(term[2])+term[1])
         for c in range(len(term[0])):
-          print(term[0][c]+"(", end="")
-          nest(term[c+3])
-          print(")", end="")
+          eq.append(term[0][c])
+          if (term[c+3][0]!=[] and isinstance(term[c+3][1], str)) or isinstance(term[c+3][1], list):
+            eq.append("(")
+            nest(term[c+3])
+            eq.append(")")
+          else:
+            nest(term[c+3])
     # If term is the sum of others terms check each term
     else:
       for d in range(len(term)):
         nest(term[d])
+        if d+1 != len(terms) and eq[-1] not in "+-*/(":
+          eq.append("+")
+
   # Main Loop
   for x in range(1):
     for a in range(len(terms[x])):
-      # If no modifers
-      if terms[x][a][0]==[]:
-        print(numc(terms[x][a][2])+terms[x][a][1], end="")
-      # If modifers -> check modifing terms
-      else:
-        print(numc(terms[x][a][2]), end="")
-        for b in range(len(terms[x][a][0])):
-          print(terms[x][a][0][b]+"(", end="")
-          nest(terms[x][a][b+3])
-          print(")", end="")
-      print("+", end="")
+      nest(terms[x][a])
+
+  # Print Loop
+  for a in eq:
+    print(a, end="")
   print()
 print_eq()
