@@ -5,7 +5,6 @@ equation = input("Equation")
 equal = 0
 co_add = False
 
-
 terms = [[[[],"",0]], [[[],"",0]]]
 par_sign = []
 # Inital Formating
@@ -46,19 +45,20 @@ for x in range(2):
 
     # +, -
     if equation[a] in "+-":
-      if terms[y][-1][0] == [] or terms[y][-1][-1][2] != 0:
-        # 2 + -3
-        if equation[a] + equation[a+1] == "+-":
-          co += equation[a+1]
-          a += 1
-        # 2 - 3
-        elif equation[a]=="-":
-          co += equation[a]
-        # New term
-        if equation[a-1]+equation[a] != "(-":
-          terms[y].append([[],"",0])
-      # 2 * -3
-      elif equation[a] == "-":
+      if equation[a]+equation[a+1] != "-(":
+        if terms[y][-1][0] == [] or terms[y][-1][-1][2] != 0:
+          # 2 + -3
+          if equation[a] + equation[a+1] == "+-":
+            co += equation[a+1]
+            a += 1
+          # 2 - 3
+          elif equation[a]=="-":
+            co += equation[a]
+          # New term
+          if equation[a-1]+equation[a] != "(-":
+            terms[y].append([[],"",0])
+        # 2 * -3
+        elif equation[a] == "-":
           co += equation[a]
 
     # *, /
@@ -140,21 +140,46 @@ for x in range(2):
     elif (terms[y][-1][-1][1] != "" or not co_add) and terms[y][-1][-1][2] == 0:
       terms[y][-1][-1][2] = float(co)
 print(terms)
-"""
+
+
+
 def print_eq():
-  for x in range(2):
+  # Number Check: See if number can be int
+  def numc(num):
+    if num%1==0:
+      return str(int(num))
+    return str(num)
+  # Prints modifing terms
+  def nest(term):
+    # If term is single term
+    if isinstance(term[1], str):
+      # If no modifers
+      if term[0]==[]:
+        print(numc(term[2])+term[1]+"+", end="")
+      # If modifers -> check modifing terms
+      else:
+        print(numc(term[2]), end="")
+        for c in range(len(term[0])):
+          print(term[0][c]+"(", end="")
+          nest(term[c+3])
+          print(")", end="")
+    # If term is the sum of others terms check each term
+    else:
+      for d in range(len(term)):
+        nest(term[d])
+  # Main Loop
+  for x in range(1):
     for a in range(len(terms[x])):
-      term_cur = terms[x][a]
-      while True:
-        if isinstance(term_cur[1], str):
-          if term_cur[0]==[]:
-            pass
-          else:
-            for b in len(term_cur[0]):
-              term_cur = terms[x][a][2+b]
-        else:
-          for b in range(term_cur):
-            
+      # If no modifers
+      if terms[x][a][0]==[]:
+        print(numc(terms[x][a][2])+terms[x][a][1], end="")
+      # If modifers -> check modifing terms
+      else:
+        print(numc(terms[x][a][2]), end="")
+        for b in range(len(terms[x][a][0])):
+          print(terms[x][a][0][b]+"(", end="")
+          nest(terms[x][a][b+3])
+          print(")", end="")
       print("+", end="")
-#print_eq()
-"""
+  print()
+print_eq()
