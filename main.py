@@ -63,12 +63,18 @@ for x in range(2):
 
     # (
     elif equation[a] == "(":
-      # Go down layer, and save sign before "("
-      terms.append([[[],"",0]])
-      par_sign.append(equation[a-1])
-    
+      # Check if () change PEMDAS order
+      for b in range(a+1, len(equation)+1):
+        if equation[b]==")":
+          break
+        # If change: go down layer, and save sign before "("
+        elif equation[b] not in ".-0123456789":
+          terms.append([[[],"",0]])
+          par_sign.append(equation[a-1])
+          break
+
     # )
-    elif equation[a] == ")":
+    elif equation[a] == ")" and len(par_sign)!=0 and len(par_sign)==len(terms)-2:
       # For double () and side control
       if len(terms)>3:
         z = -2
@@ -98,7 +104,7 @@ for x in range(2):
       del terms[y]
 
     # If coefficient or varible
-    elif equation[a] != "=":
+    elif equation[a] not in "=)":
       # If coefficient
       if equation[a] in "0123456789":
         co += equation[a]
@@ -113,7 +119,7 @@ for x in range(2):
     a += 1
 
   # Setting coefficient
-  if equation[a-1] in "0123456789":
+  if equation[a-1] in "0123456789" and equation[a-1] != ")":
     if co == "":
       if co == "-":
         co = "-1"
@@ -124,9 +130,7 @@ for x in range(2):
         terms[y][-1][2] = float(co)
     elif (terms[y][-1][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][-1][2] == 0:
       terms[y][-1][-1][2] = float(co)
-print("end", terms[0][0])
-
-example = [["*"], "", 2, [["/"], "", 9, [[[], "", 3], [[], "", 3]]]] # 2*(9/(3+3))
+print(terms)
 
 def print_eq():
   for x in range(2):
