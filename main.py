@@ -6,7 +6,7 @@ equal = 0
 
 
 terms = [[[[],"",0]], [[[],"",0]]]
-par_key = [[], []]
+par_sign = []
 for x in range(2):
   co = ""
   a = equal+x
@@ -26,35 +26,30 @@ for x in range(2):
       break
 
     # Setting coefficient
-    if equation[a] not in "0123456789":
+    if equation[a] not in "0123456789" and equation[a-1] != ")":
       if co == "":
         if co == "-":
           co = "-1"
         else:
           co = "1"
       if len(terms[y][-1][0])==0:
-        if (terms[y][-1][1] != "" or "1" not in co) and terms[y][-1][2] == 0:
+        if (terms[y][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][2] == 0:
           terms[y][-1][2] = int(co)
-      elif (terms[y][-1][-1][1] != "" or "1" not in co) and terms[y][-1][-1][2] == 0:
+      elif (terms[y][-1][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][-1][2] == 0:
         terms[y][-1][-1][2] = int(co)
       co = ""
 
     # +, -
     if equation[a] in "+-":
       if (len(terms[y][-1][0]) == 0 or terms[y][-1][-1][2] != 0) and equation[a+1] != "(":
-        if equation[a+1] in "+-":
-          # 2 + +3 | 2 + -3
-          if equation[a] == "+":
-            co += equation[a+1]
-          # 2 + +3 | 2 - +3
-          elif equation[a+1] == "+":
-            co += equation[a]
+        # 2 + -3
+        if equation[a] + equation[a+1] == "+-":
+          co += equation[a+1]
           a += 1
         # 2 - 3
         elif equation[a]=="-":
           co += equation[a]
         # New term
-        print("run")
         terms[y].append([[],"",0])
       # 2 * -3
       elif equation[a] == "-":
@@ -70,25 +65,35 @@ for x in range(2):
     elif equation[a] == "(":
       # Go down layer, and save sign before "("
       terms.append([[[],"",0]])
-      par_enter = equation[a-1]
+      par_sign.append(equation[a-1])
     
     # )
     elif equation[a] == ")":
+      if len(terms)>3:
+        z = -2
+      else:
+        z = -1
+      if len(terms[y])==1:
+        par_term = terms[y][0]
+      else:
+        par_term = terms[y]
+      print(par_term)
       # x+(1+1)
-      if par_enter == "+":
-        terms[x].append(terms[y][0])
+      if par_sign[len(terms)-2] == "+":
+        terms[z].append(par_term)
       # x-(1+1)
-      elif par_enter == "-":
-        terms[x].append([["*"], "", -1, terms[y][0]])
+      elif par_sign[len(terms)-2] == "-":
+        terms[z].append([["*"], "", -1, par_term])
       # x*(1+1) | # x/(1+1)
-      elif par_enter in "*/":
-        del terms[x][-1][-1]
-        terms[x][-1].append(terms[y][0])
+      elif par_sign[len(terms)-2] in "*/":
+        del terms[z][-1][-1]
+        terms[z][-1].append(par_term)
       # x(1+1)
       else:
-        terms[x][-1][0].append("*")
-        terms[x][-1].append(terms[y][0])
+        terms[z][-1][0].append("*")
+        terms[z][-1].append(par_term)
       # Go up layer
+      
       del terms[y]
 
     # If coefficient or varible
@@ -118,21 +123,23 @@ for x in range(2):
         terms[y][-1][2] = int(co)
     elif (terms[y][-1][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][-1][2] == 0:
       terms[y][-1][-1][2] = int(co)
-print(terms)
+print(terms[0][0])
+
 example = [["*"], "", 2, [["/"], "", 9, [[[], "", 3], [[], "", 3]]]] # 2*(9/(3+3))
+
 def print_eq():
   for x in range(2):
     for a in range(len(terms[x])):
-      term_cur = term[x][a]
+      term_cur = terms[x][a]
       while True:
         if len(term_cur[0])==0:
           pass
         else:
           for b in len(term_cur[0]):
-            term_cur = term[x][a][2+b]
+            term_cur = terms[x][a][2+b]
             
       print("+", end="")
-
+#print_eq()
 """
 if len(term[x][a][0])==0:
   if term[x][a][1]!="":
