@@ -69,23 +69,26 @@ for x in range(2):
     
     # )
     elif equation[a] == ")":
+      print(terms)
       if len(terms)>3:
         z = -2
       else:
-        z = -1
+        if x == 0:
+          z = 0
+        else:
+          z = 1
       if len(terms[y])==1:
         par_term = terms[y][0]
       else:
         par_term = terms[y]
-      print(par_term)
       # x+(1+1)
-      if par_sign[len(terms)-2] == "+":
+      if par_sign[len(terms)-3] == "+":
         terms[z].append(par_term)
       # x-(1+1)
-      elif par_sign[len(terms)-2] == "-":
+      elif par_sign[len(terms)-3] == "-":
         terms[z].append([["*"], "", -1, par_term])
       # x*(1+1) | # x/(1+1)
-      elif par_sign[len(terms)-2] in "*/":
+      elif par_sign[len(terms)-3] in "*/":
         del terms[z][-1][-1]
         terms[z][-1].append(par_term)
       # x(1+1)
@@ -93,7 +96,7 @@ for x in range(2):
         terms[z][-1][0].append("*")
         terms[z][-1].append(par_term)
       # Go up layer
-      
+      del par_sign[-1]
       del terms[y]
 
     # If coefficient or varible
@@ -123,7 +126,7 @@ for x in range(2):
         terms[y][-1][2] = int(co)
     elif (terms[y][-1][-1][1] != "" or (co != "1" and co != "-1")) and terms[y][-1][-1][2] == 0:
       terms[y][-1][-1][2] = int(co)
-print(terms[0][0])
+print("end", terms[0][0])
 
 example = [["*"], "", 2, [["/"], "", 9, [[[], "", 3], [[], "", 3]]]] # 2*(9/(3+3))
 
@@ -137,7 +140,7 @@ def print_eq():
         else:
           for b in len(term_cur[0]):
             term_cur = terms[x][a][2+b]
-            
+
       print("+", end="")
 #print_eq()
 """
