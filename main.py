@@ -9,11 +9,19 @@ terms = [[[[],"",0]], [[[],"",0]]]
 par_sign = []
 # Inital Formating
 for x in range(2):
-  co = ""
-  co_add = False
-  a = equal+x
-  while a < len(equation):
+  def coefficient(co, terms, co_add):
+    if terms[y][-1][0]==[]:
+      if (terms[y][-1][1] != "" or co != "") and terms[y][-1][2] == 0:
+        if co == "" or co == "-":
+          co += "1"
+        terms[y][-1][2] = float(co)
+    elif (terms[y][-1][-1][0][1] != "" or not co_add) and terms[y][-1][-1][0][2] == 0:
+      if co == "" or co == "-":
+        co += "1"
+      terms[y][-1][-1][0][2] = float(co)
 
+  a, co, co_add = equal+x, "", False
+  while a < len(equation):
     # Layering for ()
     if len(terms)==2:
       y = x
@@ -21,32 +29,22 @@ for x in range(2):
       y = -1
 
     # Check for "="
-    if x==1 and equal == 0:
-        break
+    if x==1 and equal==0:
+      break
     elif equation[a] == "=":
       equal = a
       break
 
     # Setting coefficient
     if equation[a] not in ".0123456789" and equation[a-1] not in "+-)":
-      if co == "":
-        if co == "-":
-          co = "-1"
-        else:
-          co = "1"
-        co_add = True
-      if terms[y][-1][0]==[]:
-        if (terms[y][-1][1] != "" or not co_add) and terms[y][-1][2] == 0:
-          terms[y][-1][2] = float(co)
-      elif (terms[y][-1][-1][0][1] != "" or not co_add) and terms[y][-1][-1][0][2] == 0:
-        terms[y][-1][-1][0][2] = float(co)
+      coefficient(co, terms, co_add)
       co_add = False
       co = ""
 
     # +, -
     if equation[a] in "+-":
       if equation[a]+equation[a+1] != "-(":
-        if terms[y][-1][0] == [] or terms[y][-1][-1][2] != 0:
+        if terms[y][-1][0] == [] or terms[y][-1][-1][-1][2] != 0:
           # 2 + -3
           if equation[a] + equation[a+1] == "+-":
             co += equation[a+1]
@@ -106,7 +104,7 @@ for x in range(2):
     # If coefficient or varible
     elif equation[a] != "=":
       # If coefficient
-      if equation[a] in "0123456789":
+      if equation[a] in ".0123456789":
         co += equation[a]
       # If varible
       else:
@@ -120,20 +118,7 @@ for x in range(2):
 
   # Setting coefficient
   if equation[a-1] in ".0123456789" and equation[a-1] not in "+-)" and (x+equal>1 or x+equal==0):
-    if co == "":
-      if co == "-":
-        co = "-1"
-      else:
-        co = "1"
-      co_add = True
-    if terms[y][-1][0]==[]:
-      if (terms[y][-1][1] != "" or not co_add) and terms[y][-1][2] == 0:
-        terms[y][-1][2] = float(co)
-    elif (terms[y][-1][-1][0][1] != "" or not co_add) and terms[y][-1][-1][0][2] == 0:
-      terms[y][-1][-1][0][2] = float(co)
-print(terms)
-
-
+    coefficient(co, terms, co_add)
 
 def print_eq():
   eq = []
@@ -181,7 +166,6 @@ def print_eq():
   for a in eq:
     print(a, end="")
   print()
-print_eq()
 
 def simplify():
   def inner(term):
@@ -231,6 +215,6 @@ def simplify():
   # Main Loop
   for x in range(2):
     inner(terms[x])
+
 simplify()
-print(terms)
 print_eq()
