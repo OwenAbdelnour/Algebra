@@ -141,7 +141,7 @@ def print_eq():
   def numc(num):
     if num%1==0:
       return str(int(num))
-
+    return str(num)
   # Prints modifing terms
   def inner(term):
     if len(term)==1:
@@ -193,7 +193,6 @@ def simplify():
       if term[0] != []:
         c = 0
         while c < len(term[0]):
-          print(term, c)
           if len(term[c+3])==1 and term[c+3][0][0]==[]:
             if term[1]=="" or term[c+3][0][1]=="":
               if term[0][c]=="*":
@@ -208,22 +207,27 @@ def simplify():
               c += 1
           else:
             inner(term[c+3])
-         
-    # If sum of terms
+    # If sum of terms -> Add terms
     else:
-      print(terms)
       d = 0
       while d < len(term):
-        if len(term)>1:
-          if len(term[d]) == 3 and isinstance(term[d][1], str):
-            if len(term[d+1]) == 3 and isinstance(term[d+1][1], str) and term[d][1]==term[d+1][1]:
-              term[d][2] = term[d][2]+term[d+1][2]
-              del term[d+1]
-          else:
-            inner(term[d])
-            d += 1
+        if len(term[d]) == 3 and isinstance(term[d][1], str):
+          e = 0
+          while e < len(term):
+            if d != e:
+              if  len(term[e]) == 3 and isinstance(term[e][1], str):
+                if term[d][1]==term[e][1]:
+                  term[d][2] = term[d][2]+term[e][2]
+                  del term[e]
+                else:
+                  e += 1
+              else:
+                inner(term[e])
+            else:
+              e += 1
         else:
-          break
+          inner(term[d])
+        d += 1
   # Main Loop
   for x in range(2):
     inner(terms[x])
