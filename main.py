@@ -1,7 +1,7 @@
 #terms[side of "="][term][modifer sign key, varible, coefficient, modifer 1, 2, 3...]
 #Each modfier is formated as a term
 
-equation = input("Equation")
+equation = input("Equation: ")
 equal = 0
 co_add = False
 
@@ -35,11 +35,11 @@ for x in range(2):
         else:
           co = "1"
         co_add = True
-      if len(terms[y][-1][0])==0:
+      if terms[y][-1][0]==[]:
         if (terms[y][-1][1] != "" or not co_add) and terms[y][-1][2] == 0:
           terms[y][-1][2] = float(co)
-      elif (terms[y][-1][-1][1] != "" or not co_add) and terms[y][-1][-1][2] == 0:
-        terms[y][-1][-1][2] = float(co)
+      elif (terms[y][-1][-1][0][1] != "" or not co_add) and terms[y][-1][-1][0][2] == 0:
+        terms[y][-1][-1][0][2] = float(co)
       co_add = False
       co = ""
 
@@ -65,7 +65,7 @@ for x in range(2):
     elif equation[a] in "*/":
       # Add sign to key, and term to back of existing
       terms[y][-1][0].append(equation[a])
-      terms[y][-1].append([[], "",0])
+      terms[y][-1].append([[[], "",0]])
 
     # (
     elif equation[a] == "(":
@@ -87,18 +87,10 @@ for x in range(2):
         if len(terms)>3:
           z = -2
         else:
-          if x == 0:
-            z = 0
-          else:
-            z = 1
-        # If + in ()
-        if len(terms[y])==1:
-          par_term = terms[y][0]
-        else:
-          par_term = terms[y]    
+          z = x
         # x-(1+1)
         if par_sign[len(terms)-3] == "-":
-          terms[z].append([["*"], "", -1, par_term])
+          terms[z].append([["*"], "", -1, terms[y]])
         else:
           # x*(1+1) | # x/(1+1)
           if par_sign[len(terms)-3] in "*/":
@@ -106,7 +98,7 @@ for x in range(2):
           # x(1+1)
           else:
             terms[z][-1][0].append("*")
-          terms[z][-1].append(par_term)
+          terms[z][-1].append(terms[y])
         # Go up layer
         del par_sign[-1]
         del terms[y]
@@ -134,11 +126,11 @@ for x in range(2):
       else:
         co = "1"
       co_add = True
-    if len(terms[y][-1][0])==0:
+    if terms[y][-1][0]==[]:
       if (terms[y][-1][1] != "" or not co_add) and terms[y][-1][2] == 0:
         terms[y][-1][2] = float(co)
-    elif (terms[y][-1][-1][1] != "" or not co_add) and terms[y][-1][-1][2] == 0:
-      terms[y][-1][-1][2] = float(co)
+    elif (terms[y][-1][-1][0][1] != "" or not co_add) and terms[y][-1][-1][0][2] == 0:
+      terms[y][-1][-1][0][2] = float(co)
 print(terms)
 
 
@@ -151,12 +143,14 @@ def print_eq():
       return str(int(num))
 
   # Prints modifing terms
-  def nest(term):
+  def inner(term):
+    if len(term)==1:
+      inner(term[0])
     # If term is single term
-    if isinstance(term[1], str):
+    elif isinstance(term[1], str):
       # If no modifers
       if term[0]==[]:
-        if len(eq)!=0 and eq[-1] not in "+-*/(":
+        if len(eq)!=0 and eq[-1] not in "+-*/(=":
           eq.append("+")
         eq.append(numc(term[2])+term[1])
       # If modifers -> check modifing terms; par control
@@ -164,26 +158,75 @@ def print_eq():
         eq.append(numc(term[2])+term[1])
         for c in range(len(term[0])):
           eq.append(term[0][c])
-          if (term[c+3][0]!=[] and isinstance(term[c+3][1], str)) or isinstance(term[c+3][1], list):
+          if len(term[c+3])>1:
             eq.append("(")
-            nest(term[c+3])
+            inner(term[c+3])
             eq.append(")")
           else:
-            nest(term[c+3])
+            inner(term[c+3])
     # If term is the sum of others terms check each term
     else:
       for d in range(len(term)):
-        nest(term[d])
-        if d+1 != len(terms) and eq[-1] not in "+-*/(":
+        inner(term[d])
+        if d+1 != len(terms) and eq[-1] not in "+-*/(=":
           eq.append("+")
 
   # Main Loop
-  for x in range(1):
-    for a in range(len(terms[x])):
-      nest(terms[x][a])
+  for x in range(2):
+    inner(terms[x])
+    if x==0:
+      eq.append("=")
 
   # Print Loop
   for a in eq:
     print(a, end="")
   print()
+print_eq()
+
+def simplify():
+  def inner(term):
+    # For side start and modifer nesting
+    if len(term)==1:
+      inner(term[0])
+    # If selected is term and not sum of terms
+    elif len(term)>=3 and isinstance(term[1], str):
+      if term[0] != []:
+        c = 0
+        while c < len(term[0]):
+          print(term, c)
+          if len(term[c+3])==1 and term[c+3][0][0]==[]:
+            if term[1]=="" or term[c+3][0][1]=="":
+              if term[0][c]=="*":
+                term[2] = term[2]*term[c+3][0][2]
+              elif term[0][c]=="/":
+                term[2] = term[2]/term[c+3][0][2]
+              if term[1]=="":
+                term[1] = term[c+3][0][1]
+              del term[c+3]
+              del term[0][c]
+            else:
+              c += 1
+          else:
+            inner(term[c+3])
+         
+    # If sum of terms
+    else:
+      print(terms)
+      d = 0
+      while d < len(term):
+        if len(term)>1:
+          if len(term[d]) == 3 and isinstance(term[d][1], str):
+            if len(term[d+1]) == 3 and isinstance(term[d+1][1], str) and term[d][1]==term[d+1][1]:
+              term[d][2] = term[d][2]+term[d+1][2]
+              del term[d+1]
+          else:
+            inner(term[d])
+            d += 1
+        else:
+          break
+  # Main Loop
+  for x in range(2):
+    inner(terms[x])
+simplify()
+print(terms)
 print_eq()
