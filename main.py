@@ -5,6 +5,14 @@ equation = input("Equation: ")
 equal = 0
 co_add = False
 
+if 2!=2:
+  pass
+elif 3!=3:
+  if 4!=4:
+    pass
+else:
+  pass
+
 terms = [[[[],"",0]], [[[],"",0]]]
 # Inital Formating
 for x in range(2):
@@ -173,13 +181,16 @@ def simplify():
         while c < len(term[0]):
           # Single term * /
           if len(term[c+3])==1 and term[c+3][0][0]==[]:
-            if term[1]=="" or term[c+3][0][1]=="":
-              if term[0][c]=="*":
-                term[2] = term[2]*term[c+3][0][2]
-              elif term[0][c]=="/":
-                term[2] = term[2]/term[c+3][0][2]
+            # *
+            if term[0][c]=="*" and (term[1]=="" or term[c+3][0][1]==""):
+              term[2] = term[2]*term[c+3][0][2]
               if term[1]=="":
                 term[1] = term[c+3][0][1]
+              del term[c+3]
+              del term[0][c]
+            # /
+            elif term[0][c]=="/" and term[1]==term[c+3][0][1]:
+              term[2] = term[2]/term[c+3][0][2]
               del term[c+3]
               del term[0][c]
             else:
@@ -210,7 +221,6 @@ def simplify():
     else:
       d = 0
       while d < len(term):
-        print(term, d)
         e = 0
         if len(term[d]) == 3 and isinstance(term[d][1], str):
           while e < len(term):
